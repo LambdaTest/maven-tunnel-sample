@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.IExecutionListener;
 import org.testng.annotations.AfterTest;
