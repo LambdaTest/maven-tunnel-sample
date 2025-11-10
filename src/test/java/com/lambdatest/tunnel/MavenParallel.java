@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.IExecutionListener;
@@ -35,31 +36,36 @@ public class MavenParallel implements IExecutionListener {
     }
   }
 
-  @BeforeTest
-  @org.testng.annotations.Parameters(value = { "browser", "version", "platform", "resolution" })
-  public void setUp(String browser, String version, String platform, String resolution) throws Exception {
-    DesiredCapabilities capabilities = new DesiredCapabilities();
+    @BeforeTest
+    @org.testng.annotations.Parameters(value = { "browser", "version", "platform", "resolution" })
+    public void setUp(String browser, String version, String platform, String resolution) throws Exception {
+        ChromeOptions options = new ChromeOptions();
+        HashMap<String, Object> ltOptions = new HashMap<>();
 
-    capabilities.setCapability("build", "Parallel Maven Tunnel");
-    capabilities.setCapability("name", "Maven Tunnel");
-    capabilities.setCapability("browserName", browser);
-    capabilities.setCapability("version", version);
-    capabilities.setCapability("platform", platform);
-    capabilities.setCapability("tunnel", true);
-    capabilities.setCapability("network", true);
-    capabilities.setCapability("console", true);
-    capabilities.setCapability("visual", true);
-    capabilities.setCapability("tunnelName", "MavenParallel");
+        ltOptions.put("build", "Parallel Maven Tunnel");
+        ltOptions.put("name", "Maven Tunnel");
+        ltOptions.put("platformName", platform);    // W3C key
+        ltOptions.put("resolution", resolution);
+        ltOptions.put("tunnel", true);
+        ltOptions.put("network", true);
+        ltOptions.put("console", true);
+        ltOptions.put("visual", true);
+        ltOptions.put("tunnelName", "MavenParallel");
 
-    try {
-      driver = new RemoteWebDriver(new URL("https://" + username + ":" + accessKey + "@hub.lambdatest.com/wd/hub"),
-          capabilities);
-    } catch (MalformedURLException e) {
-      System.out.println("Invalid grid URL");
+        options.setCapability("browserName", browser);
+        options.setCapability("browserVersion", version);
+        options.setCapability("LT:Options", ltOptions);
+
+        try {
+            driver = new RemoteWebDriver(new URL("https://" + username + ":" + accessKey + "@hub.lambdatest.com/wd/hub"),
+                    options);
+        } catch (MalformedURLException e) {
+            System.out.println("Invalid grid URL");
+        }
     }
-  }
 
-  @Test()
+
+    @Test()
   public void testTunnel() throws Exception {
     // Check LocalHost on XAMPP
     driver.get("http://localhost.lambdatest.com");
